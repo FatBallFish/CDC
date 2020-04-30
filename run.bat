@@ -2,4 +2,5 @@
 pip install -r requirements.txt
 
 @echo reload cdc_python
-@python manage.py runserver 0.0.0.0:8848
+@start python manage.py runserver 0.0.0.0:8848
+@exit
