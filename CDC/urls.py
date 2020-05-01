@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
 from django.views.decorators.csrf import csrf_exempt
 from CDC.settings import API_ROOT
 
@@ -22,6 +23,7 @@ from apps.realauth.views import LoginTestView
 from apps.recommend.views import UserItemCfView
 
 urlpatterns = [
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path(API_ROOT + "login/", csrf_exempt(LoginTestView.as_view()), name="login_test"),
     path(API_ROOT + "recommend/", csrf_exempt(UserItemCfView.as_view()), name="user_item")

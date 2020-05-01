@@ -30,12 +30,14 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "guosai.zustmanong.cn", "guosai.zustm
 
 INSTALLED_APPS = [
     'simpleui',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
     'apps.realauth.apps.RealauthConfig',
     # 'apps.operation.apps.OperationConfig',
     'apps.users.apps.UsersConfig',
@@ -153,3 +155,6 @@ SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
 # SIMPLEUI_HOME_TITLE = '酒店视觉AI解决方案-后台管理'
 SIMPLEUI_HOME_INFO = False  # 服务器信息,右侧simple ui主页
 SIMPLEUI_ANALYSIS = False
+
+# import-export
+IMPORT_EXPORT_USE_TRANSACTIONS = True  # 使用数据库事务，确保数据安全
