@@ -149,12 +149,24 @@ COS_ALLOWURL = "http://127.0.0.1,http://localhost"
 COS_ROOTURL = "https://hotel-1251848017.cos.ap-shanghai.myqcloud.com/"
 COS_SERVER_MODE = 1
 COS_CACHE_TIME = 3
+
 # simpleui
 SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
 # SIMPLEUI_HOME_PAGE = 'https://www.baidu.com'
-# SIMPLEUI_HOME_TITLE = '酒店视觉AI解决方案-后台管理'
+# SIMPLEUI_HOME_TITLE = '易联邦-后台管理'
 SIMPLEUI_HOME_INFO = False  # 服务器信息,右侧simple ui主页
 SIMPLEUI_ANALYSIS = False
 
+SIMPLEUI_ICON = {
+    'Token': 'fas fa-key',
+    'Tokens': 'fas fa-key',
+    '用户推荐行为':"fas fa-ad",
+    '商品': 'fas fa-tags',
+    '商品-用户行为': "fas fa-receipt",
+    "店铺": "fas fa-store",
+    '实名认证': 'fas fa-user-tie',
+}
+
+SIMPLEUI_LOGO = '/media/images/logo.png'
 # import-export
 IMPORT_EXPORT_USE_TRANSACTIONS = True  # 使用数据库事务，确保数据安全

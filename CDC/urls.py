@@ -15,14 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.static import serve
 from django.conf.urls import url, include
 from django.views.decorators.csrf import csrf_exempt
 from CDC.settings import API_ROOT
 
+from CDC import settings
 from apps.realauth.views import LoginTestView
 from apps.recommend.views import UserItemCfView
 
+admin.site.site_title = "易联邦"
+admin.site.site_header = "易联邦 后台管理"
+
 urlpatterns = [
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path(API_ROOT + "login/", csrf_exempt(LoginTestView.as_view()), name="login_test"),
