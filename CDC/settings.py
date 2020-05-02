@@ -160,9 +160,9 @@ SMS_APPKEY = "417a2a23700289bf50f6cff4fdefa467"
 COS_SECRET_ID = "AKIDBA5ss1AJZZloVP4la9SWpMC6wXtzqNfi"
 COS_SECRET_KEY = "A9yjEUcmhMmaCYf3SjwyBSjZZUOAh0GW"
 COS_REGION = "ap-shanghai"
-COS_BUCKET = "hotel-1251848017"
+COS_BUCKET = "guosai-1251848017"
 COS_ALLOWURL = "http://127.0.0.1,http://localhost"
-COS_ROOTURL = "https://hotel-1251848017.cos.ap-shanghai.myqcloud.com/"
+COS_ROOTURL = "https://guosai-1251848017.cos.ap-shanghai.myqcloud.com"
 COS_SERVER_MODE = 1
 COS_CACHE_TIME = 3
 

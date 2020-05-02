@@ -1,5 +1,7 @@
 from django.db import models
 
+from datetime import datetime
+
 
 # Create your models here.
 class JpaStores(models.Model):
@@ -24,6 +26,10 @@ class JpaStores(models.Model):
         db_table = 'jpa_stores'
         verbose_name = "店铺"
         verbose_name_plural = verbose_name
+
+    def delete(self, using=None, keep_parents=False):
+        self.is_active = 5
+        self.save()
 
 
 class JpaItems(models.Model):

@@ -5,7 +5,6 @@ from apps.operation.views import TokenUserView
 from apps.recommend.models import JpaItems, JpaItemUserBehavior
 from extra_apps.CF.base_item import RelationRecommend
 
-
 # Create your views here.
 
 class UserItemCfView(TokenUserView):
