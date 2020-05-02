@@ -106,9 +106,25 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'users.JpaUsers'
+PASSWORD_HASHERS = (
+    'CDC.hashers.MyMD5PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.CryptPasswordHasher',
+)
+AUTHENTICATION_BACKENDS = (
+    "CDC.backend.MyBackend",
+    'django.contrib.auth.backends.ModelBackend'
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
+
 
 LANGUAGE_CODE = 'zh-hans'
 
@@ -160,7 +176,7 @@ SIMPLEUI_ANALYSIS = False
 SIMPLEUI_ICON = {
     'Token': 'fas fa-key',
     'Tokens': 'fas fa-key',
-    '用户推荐行为':"fas fa-ad",
+    '用户推荐行为': "fas fa-ad",
     '商品': 'fas fa-tags',
     '商品-用户行为': "fas fa-receipt",
     "店铺": "fas fa-store",

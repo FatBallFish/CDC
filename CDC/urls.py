@@ -24,8 +24,8 @@ from CDC import settings
 from apps.realauth.views import LoginTestView
 from apps.recommend.views import UserItemCfView
 
-admin.site.site_title = "易联邦"
-admin.site.site_header = "易联邦 后台管理"
+admin.site.site_title = "易邻邦"
+admin.site.site_header = "易邻邦 后台管理"
 
 urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
