@@ -49,6 +49,8 @@ class JpaItems(models.Model):
     create_time = models.DateTimeField(verbose_name="创建时间")
     lastmodified_time = models.DateTimeField(verbose_name="最新操作时间",
                                              db_column='lastModified_time')  # Field name made lowercase.
+    item_tags = models.TextField(verbose_name="标签组")
+
 
     class Meta:
         managed = False

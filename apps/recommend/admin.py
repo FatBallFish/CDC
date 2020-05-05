@@ -1,11 +1,13 @@
+import json
+
 from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
 from django.db.models import Q
 
 from apps.recommend.models import JpaItems, JpaItemUserBehavior, JpaStores
-
 from apps.recommend.resources import JpaStoresResource, JpaItemsResource, JpaItemUserBehaviorResource
 
+from extra_apps.tags.main import TfIdf
 from datetime import datetime
 from random import Random
 
@@ -103,18 +105,22 @@ class JpaStoresAdmin(ImportExportActionModelAdmin):
 class JpaItemsAdmin(ImportExportActionModelAdmin):
     fieldsets = (
         ("基本信息", {'fields': ('id', 'item_name', 'store_id', 'item_type')}),
-        ("详细信息", {"fields": ("item_des", "item_portrait", "item_status", "original_price", "discount_price")}),
+        ("详细信息",
+         {"fields": ("item_tags", "item_des", "item_portrait", "item_status", "original_price", "discount_price")}),
         ("其他信息",
          {"fields": ("item_stock", "item_geohash")}),
         ("时间信息", {"fields": ("create_time", "lastmodified_time")})
     )
     list_display = (
-        'id', 'item_name', 'item_status', 'item_portrait', 'store_id', 'original_price', 'discount_price', 'item_stock',
+        'id', 'item_name', 'item_type', 'item_tags', 'item_status', 'item_portrait', 'store_id', 'original_price',
+        'discount_price',
+        'item_stock',
         'lastmodified_time')
     list_display_links = list_display
-    search_fields = ('item_name', 'item_des')
+    search_fields = ('id', 'item_name', 'item_des', 'item_tags')
     list_filter = (
-        'store_id', 'item_type', 'item_status', 'original_price', 'discount_price', 'item_stock', 'create_time',
+        'store_id', 'item_type', 'item_tags', 'item_status', 'original_price', 'discount_price', 'item_stock',
+        'create_time',
         'lastmodified_time')
     list_per_page = 20
 
@@ -195,7 +201,7 @@ class JpaItemsAdmin(ImportExportActionModelAdmin):
             return False
         return True
 
-    actions = ["delete_item"]
+    actions = ["delete_item", "getTags"]
 
     def delete_item(self, request, obj):
         # 关闭店铺时，将该店铺所属的所有商品设为已删除状态
@@ -208,6 +214,20 @@ class JpaItemsAdmin(ImportExportActionModelAdmin):
     delete_item.short_description = "删除商品"
     delete_item.type = "danger"
     delete_item.confirm = '是否删除商品？删除后不可恢复。'
+
+    def getTags(self, request, obj):
+        if request.user.is_superuser:
+            for o in obj.all():
+                if o.item_status == -1:
+                    # 商品为信息未完善状态
+                    continue
+                tf = TfIdf(o.item_name)
+                result_list = tf.Tfidf()
+                o.item_tags = json.dumps(result_list[0], ensure_ascii=False)
+                o.save()
+
+    getTags.short_description = "提取Tags"
+    getTags.confirm = '提取后将覆盖原tags内容'
 
 
 @admin.register(JpaItemUserBehavior)

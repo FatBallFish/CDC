@@ -1,3 +1,5 @@
+import json
+
 from django.db.models import Q
 
 from apps.recommend.models import JpaItemUserBehavior, JpaItems
@@ -6,10 +8,13 @@ import pandas as pd
 import numpy as np
 import math
 
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 
-class RelationRecommend:
+class UserItemRecommend:
+    """
+    基于用户的协同过滤
+    """
     user: JpaUsers = None
     item: JpaItems = None
     data: dict = {}
@@ -153,7 +158,7 @@ class RelationRecommend:
         self.res.sort(key=lambda val: val[1], reverse=reverse[mode])
         return self.res[:count]
 
-    def recommend(self, count: int = 10, mode: int = 0) -> List[Tuple[str, float]]:
+    def doJob(self, count: int = 10, mode: int = 0) -> List[Tuple[str, float]]:
         """
         获得指定条数的推荐数据，以List[Tuple[item_id,score]]的形式返回
 
@@ -178,3 +183,120 @@ class RelationRecommend:
         # 返回评分最高的10件商品（基本属于操作过这个商品的其他用户购买过的其他商品）
         print("recommend data:", recommend_actions[:count])
         return recommend_actions[:count]
+
+
+class UserIndexRecommend:
+    """
+    基于商品标签的
+    算法核心：
+    统计用户所有浏览过的商品的标签及次数，计算余弦相似度
+    加入时间的比重，越新权重越高
+    不同的行为对评分也有不同的分值
+    """
+    user: JpaUsers = None
+    data: dict = {}
+
+    def __init__(self, user: JpaUsers, score: dict = None):
+        self.user = user
+        if score is not None:
+            self.behavior_score = score
+        else:
+            self.behavior_score = {1: 3, 2: 3, 3: 4, 4: 1}  # 分别表示 浏览3分，收藏3分，加购物车4分，购买1分
+        self._getUserTags(user_id=user.username)
+        self._getTags()
+        print("username:", self.user.username)
+        print("user_tags:", self.user_tags)
+        print("tags_item:", self.tags_item)
+        # self._getBrowseData()
+
+    def _getTags(self, user_id: str = None) -> Dict[str, List[Tuple[str, int]]]:
+        """
+        获取用户行为表中所有商品tag及权重
+
+        :param user_id: 用户id，若不传则为全部用户行为
+        :return: Dict[tag:[(item_id,weight),]]
+        """
+        condition = Q()
+        if user_id is not None:
+            condition = Q(username=user_id)
+        behavior_list = JpaItemUserBehavior.objects.filter(condition).order_by("-happen_time")
+        tags_dict = {}
+        # 收集商品的标签以及权重
+        for behavior in behavior_list:
+            item_id = behavior.item_id
+            # print("item_id:", item_id)
+            item = JpaItems.objects.get(id=item_id)
+            tags = item.item_tags
+            if tags is None:
+                tags = "[]"
+            tag_list = json.loads(tags)
+            for tag in tag_list:
+                if tag not in tags_dict.keys():
+                    # todo 最终决定加入行为权重
+                    # tags_dict[tag] = {item_id: 1}
+                    tags_dict[tag] = {item_id: self.behavior_score[behavior.behavior_type]}  # 加入权重
+                else:
+                    if item_id not in tags_dict[tag].keys():
+                        # tags_dict[tag][item_id] = 1
+                        tags_dict[tag][item_id] = self.behavior_score[behavior.behavior_type]
+                    else:
+                        # tags_dict[tag][item_id] += 1
+                        tags_dict[tag][item_id] += self.behavior_score[behavior.behavior_type]
+        self.tags_item = {}
+        for tag in tags_dict.keys():
+            item_weight_list = []
+            for item_id in tags_dict[tag]:
+                tmp = (item_id, tags_dict[tag][item_id])
+                item_weight_list.append(tmp)
+            item_weight_list.sort(key=lambda val: val[1], reverse=True)
+            # print("{}:{}".format(tag, item_weight_list))
+            self.tags_item[tag] = item_weight_list
+        return self.tags_item
+
+    def _getUserTags(self, user_id: str) -> List[Tuple[str, int]]:
+        tags_item = self._getTags(user_id=user_id)
+        self.user_tags = []
+        for tag in tags_item.keys():
+            weight_sum = 0
+            for item_weight in tags_item[tag]:
+                weight_sum += item_weight[1]
+            self.user_tags.append((tag, weight_sum))
+        self.user_tags.sort(key=lambda val: val[1], reverse=True)
+        return self.user_tags
+
+    def _calculate(self) -> List[Tuple[str, int]]:
+        """
+        P(u,i)=∑sub(b) N(u,b)*N(b,i)
+        u:用户
+        i:商品
+        b:标签
+        P(u,i) 用户u对商品i的兴趣公式
+        N(u,b) 用户u对标签b的标记次数
+        N(b,i) 商品i被标记b标记的次数
+
+        :return:
+        """
+        P = {}
+        for tag1, weight1 in self.user_tags:
+            if tag1 not in self.tags_item.keys():
+                # 如果用户的tag在商品全集中找不到，则返回空列表（理论上不存在这种情况）
+                return []
+            for item_weight in self.tags_item[tag1]:
+                item_id = item_weight[0]
+                weight2 = item_weight[1]
+                if item_id not in P.keys():
+                    P[item_id] = 0
+                P[item_id] += weight1 * weight2
+        ret_list = []
+        for item_id in P.keys():
+            ret_list.append((item_id, P[item_id]))
+        ret_list.sort(key=lambda val: val[1], reverse=True)
+        print("ret_list:", ret_list)
+        return ret_list
+
+    def doJob(self, limit: int = None):
+        ret_list = self._calculate()[:limit]
+        item_list = []
+        for item, weight in ret_list:
+            item_list.append(item)
+        return item_list

@@ -22,7 +22,7 @@ from CDC.settings import API_ROOT
 
 from CDC import settings
 from apps.realauth.views import LoginTestView
-from apps.recommend.views import UserItemCfView
+from apps.recommend.views import RecommendView, ItemTagsView
 
 admin.site.site_title = "易邻邦"
 admin.site.site_header = "易邻邦 后台管理"
@@ -32,5 +32,7 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path(API_ROOT + "login/", csrf_exempt(LoginTestView.as_view()), name="login_test"),
-    path(API_ROOT + "recommend/", csrf_exempt(UserItemCfView.as_view()), name="user_item")
+    path(API_ROOT + "recommend/", csrf_exempt(RecommendView.as_view()), name="recommend"),
+    path(API_ROOT + "tags/", csrf_exempt(ItemTagsView.as_view()), name="item_tags"),
+
 ]

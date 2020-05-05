@@ -7,14 +7,8 @@ from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
 
 from extra_apps import MD5
-from extra_apps.m_cos import py_cos_main as COS
-from extra_apps.m_cos import py_cos_main as COS
-
-from CDC import settings
 
 from datetime import datetime
-
-COS.Initialize(settings.BASE_DIR)
 
 
 # Create your models here.
