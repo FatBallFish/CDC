@@ -11,6 +11,14 @@ from extra_apps import MD5
 from datetime import datetime
 
 
+class BaseModel(models.Model):
+    add_time = models.DateTimeField(verbose_name="创建时间", default=datetime.now)
+    update_time = models.DateTimeField(verbose_name="更新时间", default=datetime.now)
+
+    class Meta:
+        abstract = True
+
+
 # Create your models here.
 
 class MyMgr(BaseUserManager):

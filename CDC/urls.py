@@ -23,7 +23,7 @@ from CDC.settings import API_ROOT
 from CDC import settings
 from apps.realauth.views import LoginTestView
 from apps.recommend.views import RecommendView, ItemTagsView
-
+from apps.msg.views import MsgView
 admin.site.site_title = "易邻邦"
 admin.site.site_header = "易邻邦 后台管理"
 
@@ -34,5 +34,6 @@ urlpatterns = [
     path(API_ROOT + "login/", csrf_exempt(LoginTestView.as_view()), name="login_test"),
     path(API_ROOT + "recommend/", csrf_exempt(RecommendView.as_view()), name="recommend"),
     path(API_ROOT + "tags/", csrf_exempt(ItemTagsView.as_view()), name="item_tags"),
+    path(API_ROOT + "msg/", csrf_exempt(MsgView.as_view()), name="msg"),
 
 ]

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.tokens.apps.TokensConfig',
     'apps.recommend.apps.RecommendConfig',
+    'apps.msg.apps.MsgConfig',
 ]
 
 MIDDLEWARE = [
