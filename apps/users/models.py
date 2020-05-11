@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils.html import format_html
 from django.core.files.storage import Storage
 from django.utils.deconstruct import deconstructible
-
+from CDC import settings
+from extra_apps.m_cos import py_cos_main as COS
 from extra_apps import MD5
 
 from datetime import datetime
@@ -99,7 +100,6 @@ class JpaUsers(AbstractBaseUser, PermissionsMixin):
     create_time = models.DateTimeField(verbose_name="创建时间", default=datetime.now)
     is_active = models.BooleanField(verbose_name="是否有效", default=True, blank=True, null=True)
     gender = models.CharField(verbose_name="性别", max_length=5, choices=gender_choice, null=True, blank=True)
-    user_group = models.CharField(verbose_name="用户身份", max_length=50, default="NORMAL")
     is_staff = models.BooleanField(verbose_name="是否是员工", default=False)
     is_superuser = models.BooleanField(verbose_name="是否是超级管理员", default=False)
 

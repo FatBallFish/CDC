@@ -15,6 +15,8 @@ class JpaTokens(models.Model):
     enduring = models.CharField(verbose_name="是否长效", max_length=1, blank=True, null=True)
     expire_time = models.DateTimeField(verbose_name="过期时间", blank=True, null=True)
     type = models.CharField(verbose_name="类型", max_length=1, blank=True, null=True)
+    latitude = models.DecimalField(verbose_name="纬度", max_digits=10, decimal_places=7, blank=True, null=True)
+    longitude = models.DecimalField(verbose_name="经度", max_digits=10, decimal_places=7, blank=True, null=True)
 
     class Meta:
         verbose_name = "token"

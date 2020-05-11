@@ -12,9 +12,11 @@ class JpaTokensAdmin(admin.ModelAdmin):
     fieldsets = (
         ("基本信息", {'fields': ('token', 'username', 'enduring', 'type')}),
         ("时间信息", {"fields": ("create_time", "expire_time")}),
+        ("地理信息", {"fields": ("latitude", "longitude")})
     )
     # 显示界面
-    list_display = ('token', 'username', 'enduring', 'type', 'create_time', 'expire_time')  # 列表中显示的字段
+    list_display = (
+        'token', 'username', 'enduring', 'type', 'create_time', 'expire_time', "latitude", "longitude")  # 列表中显示的字段
     # list_display_links = list_display  # 列表中可点击跳转的字段
     list_display_links = list_display  # 列表中可点击跳转的字段
     # list_editable = ('content', 'sex', 'faces_group')  # 列表中可编辑的字段,注意：list_display_links与list_editable不可使用相同字段

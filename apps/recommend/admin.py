@@ -19,11 +19,11 @@ class JpaStoresAdmin(ImportExportActionModelAdmin):
     fieldsets = (
         ("基本信息", {'fields': ('id', 'name', 'owner_name', 'is_active')}),
         ("详细信息", {"fields": ("portrait", "store_index", "des", "tag",)}),
-        ("地区信息", {"fields": ("district", "address")}),
-        ("时间信息", {"fields": ("create_time", "lastmodified_time")})
+        ("地区信息", {"fields": ("district", "address", "latitude", "longitude")}),
+        ("时间信息", {"fields": ("create_time", "lastmodified_time")}),
     )
     list_display = (
-        'id', 'name', 'owner_name', 'is_active', 'des', 'create_time', 'lastmodified_time')
+        'id', 'name', 'owner_name', 'is_active', 'des', 'create_time', 'lastmodified_time', "latitude", "longitude")
     list_display_links = list_display
     search_fields = ('name', 'owner_name', 'des', 'tag')
     list_filter = ('is_active', 'district', 'address', 'create_time', 'lastmodified_time')
@@ -109,7 +109,7 @@ class JpaItemsAdmin(ImportExportActionModelAdmin):
          {"fields": ("item_tags", "item_des", "item_portrait", "item_status", "original_price", "discount_price")}),
         ("其他信息",
          {"fields": ("item_stock", "item_geohash")}),
-        ("时间信息", {"fields": ("create_time", "lastmodified_time")})
+        ("时间信息", {"fields": ("create_time", "lastmodified_time")}),
     )
     list_display = (
         'id', 'item_name', 'item_type', 'item_tags', 'item_status', 'item_portrait', 'store_id', 'original_price',
@@ -222,7 +222,7 @@ class JpaItemsAdmin(ImportExportActionModelAdmin):
                     # 商品为信息未完善状态
                     continue
                 tf = TfIdf(o.item_name)
-                result_list = tf.Tfidf()
+                result_list = tf.doJob()
                 o.item_tags = json.dumps(result_list[0], ensure_ascii=False)
                 o.save()
 

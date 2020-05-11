@@ -20,6 +20,8 @@ class JpaStores(models.Model):
     create_time = models.DateTimeField(verbose_name="创建时间", blank=True, null=True)
     lastmodified_time = models.DateTimeField(verbose_name="最后操作时间",
                                              db_column='lastModified_time')  # Field name made lowercase.
+    latitude = models.DecimalField(verbose_name="纬度", max_digits=10, decimal_places=7, blank=True, null=True)
+    longitude = models.DecimalField(verbose_name="经度", max_digits=10, decimal_places=7, blank=True, null=True)
 
     class Meta:
         managed = False
