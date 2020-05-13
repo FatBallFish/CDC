@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.tokens.apps.TokensConfig',
     'apps.recommend.apps.RecommendConfig',
     'apps.msg.apps.MsgConfig',
+    'apps.community.apps.CommunityConfig'
 ]
 
 MIDDLEWARE = [

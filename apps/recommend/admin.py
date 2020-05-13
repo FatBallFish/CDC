@@ -106,13 +106,15 @@ class JpaItemsAdmin(ImportExportActionModelAdmin):
     fieldsets = (
         ("基本信息", {'fields': ('id', 'item_name', 'store_id', 'item_type')}),
         ("详细信息",
-         {"fields": ("item_tags", "item_des", "item_portrait", "item_status", "original_price", "discount_price")}),
+         {"fields": (
+         "item_tags", "simple_desc", "item_des", "item_portrait", "item_status", "original_price", "discount_price")}),
         ("其他信息",
          {"fields": ("item_stock", "item_geohash")}),
         ("时间信息", {"fields": ("create_time", "lastmodified_time")}),
     )
     list_display = (
-        'id', 'item_name', 'item_type', 'item_tags', 'item_status', 'item_portrait', 'store_id', 'original_price',
+        'id', 'item_name', 'item_type', "simple_desc", 'item_tags', 'item_status', 'item_portrait', 'store_id',
+        'original_price',
         'discount_price',
         'item_stock',
         'lastmodified_time')

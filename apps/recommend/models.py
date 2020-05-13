@@ -29,6 +29,9 @@ class JpaStores(models.Model):
         verbose_name = "店铺"
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return "{}({})".format(self.name, self.id)
+
     def delete(self, using=None, keep_parents=False):
         self.is_active = 5
         self.save()
@@ -52,13 +55,16 @@ class JpaItems(models.Model):
     lastmodified_time = models.DateTimeField(verbose_name="最新操作时间",
                                              db_column='lastModified_time')  # Field name made lowercase.
     item_tags = models.TextField(verbose_name="标签组")
-
+    simple_desc = models.CharField(verbose_name="商品简述", max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'jpa_items'
         verbose_name = "商品"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return "{}-{}({})".format(self.id, self.store_id, self.item_name)
 
 
 class JpaItemUserBehavior(models.Model):
@@ -76,3 +82,6 @@ class JpaItemUserBehavior(models.Model):
         db_table = 'jpa_item_user_behavior'
         verbose_name = "商品-用户行为"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return "{}-{}".format(self.username, self.behavior_type)

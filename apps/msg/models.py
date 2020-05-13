@@ -143,7 +143,7 @@ def getNewSysMessageNum(user: JpaUsers) -> int:
 def getSysMessage(user: JpaUsers, if_new: int = 0, id: int = -1) -> dict:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         # status 100 获取系统用户失败
         return {"id": id, "status": 100, "message": "Get admin user failed", "data": {}}
@@ -178,7 +178,7 @@ def getSysMessage(user: JpaUsers, if_new: int = 0, id: int = -1) -> dict:
 def getNewPrivateNum(user: JpaUsers) -> dict:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         raise Exception("Get Admin User Failed")
     condition = ~Q(sendID=None) & ~Q(sendID=admin) & Q(recID=user)
@@ -201,7 +201,7 @@ def getPrivateMessage(user: JpaUsers, if_new: int = 0, people: str = "", start: 
     people_flag = False
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         # status 100 获取系统用户失败
         return {"id": id, "status": 100, "message": "Get admin user failed", "data": {}}
@@ -265,7 +265,7 @@ def getPrivateMessage(user: JpaUsers, if_new: int = 0, people: str = "", start: 
 def getPrivateList(user: JpaUsers, id: int = -1) -> dict:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         # status 100 获取系统用户失败
         return {"id": id, "status": 100, "message": "Get admin user failed", "data": {}}
@@ -315,7 +315,7 @@ def getPrivateList(user: JpaUsers, id: int = -1) -> dict:
 def SignSysMessageBatch(user: JpaUsers) -> tuple:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         return 100, "Get system user failed"
     num_sys = 0
@@ -336,7 +336,7 @@ def SignSysMessageBatch(user: JpaUsers) -> tuple:
 def SignPrivateMessageBatch(user: JpaUsers, people: str) -> tuple:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         return 100, "Get system user failed"
     if people == "":
@@ -358,7 +358,7 @@ def SignPrivateMessageBatch(user: JpaUsers, people: str) -> tuple:
 def FilterMessage(user: JpaUsers, type: str, subtype: str, if_new: int = 0, id: int = -1) -> dict:
     admin: JpaUsers = None
     try:
-        admin = JpaUsers.objects.get(username="hotel")
+        admin = JpaUsers.objects.get(username="guosai")
     except Exception as e:
         raise Exception("Get Admin User Failed")
 
