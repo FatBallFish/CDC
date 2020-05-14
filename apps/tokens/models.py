@@ -34,7 +34,7 @@ def Doki2(token: str) -> Tuple[bool, JpaUsers]:
     if len(Token_list) != 1:
         return False, None
     Token = Token_list[0]
-    Token.expire_time = datetime.now() + timedelta(minutes=15)
+    Token.expire_time = Token.expire_time + timedelta(minutes=15)
     Token.save()
     username = Token.username
     try:
