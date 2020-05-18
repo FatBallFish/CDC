@@ -11,6 +11,8 @@ from extra_apps import MD5
 
 from datetime import datetime
 
+from apps.realauth.models import RealAuth
+
 
 class BaseModel(models.Model):
     add_time = models.DateTimeField(verbose_name="创建时间", default=datetime.now)
@@ -91,7 +93,8 @@ class JpaUsers(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(verbose_name="用户名", primary_key=True, max_length=20, unique=True)
     nickname = models.CharField(verbose_name="昵称", max_length=20, blank=True, null=True)
     age = models.CharField(verbose_name="年龄", max_length=3, blank=True, null=True)
-    real_auth_id = models.CharField(verbose_name="实名信息id", max_length=18, blank=True, null=True)
+    real_auth = models.ForeignKey(verbose_name="实名认证信息", to=RealAuth, on_delete=models.SET_NULL, null=True,
+                                     blank=True)
     email = models.CharField(verbose_name="邮箱", max_length=30, blank=True, null=True)
     phone = models.CharField(verbose_name="手机号", max_length=11, null=True)
     image = models.ImageField(verbose_name="头像", storage=CosStorage("/user/portrait"), blank=True, null=True,

@@ -21,11 +21,11 @@ from django.views.decorators.csrf import csrf_exempt
 from CDC.settings import API_ROOT
 
 from CDC import settings
-from apps.realauth.views import LoginTestView
 from apps.recommend.views import RecommendView, ItemTagsView
 from apps.msg.views import MsgView
 from apps.community.views import CommunityView, DistanceView
-
+from apps.faces.views import FaceView, FaceGroupView, FaceMaskView
+from apps.realauth.views import RealAuthView,RealAuthCheckView
 admin.site.site_title = "易邻邦"
 admin.site.site_header = "易邻邦 后台管理"
 
@@ -33,11 +33,15 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
-    path(API_ROOT + "login/", csrf_exempt(LoginTestView.as_view()), name="login_test"),
     path(API_ROOT + "recommend/", csrf_exempt(RecommendView.as_view()), name="recommend"),
     path(API_ROOT + "tags/", csrf_exempt(ItemTagsView.as_view()), name="item_tags"),
     path(API_ROOT + "msg/", csrf_exempt(MsgView.as_view()), name="msg"),
     path(API_ROOT + "community/", csrf_exempt(CommunityView.as_view()), name="community"),
     path(API_ROOT + "distance/", csrf_exempt(DistanceView.as_view()), name="distance"),
+    path(API_ROOT + "face/group/", csrf_exempt(FaceGroupView.as_view()), name="face_group"),
+    path(API_ROOT + "face/", csrf_exempt(FaceView.as_view()), name="face_register"),
+    path(API_ROOT + "face/mask/", csrf_exempt(FaceMaskView.as_view()), name="face_mask"),
+    path(API_ROOT + "realauth/", csrf_exempt(RealAuthView.as_view()), name="real_auth"),
+    path(API_ROOT + "realauth/check/", csrf_exempt(RealAuthCheckView.as_view()), name="real_auth_check"),
 
 ]

@@ -17,7 +17,7 @@ class JpaUsersAdmin(admin.ModelAdmin):
         ("账号信息", {'fields': ('username', 'read_password', 'password', "salt",)}),
         ("其他信息", {"fields": ('image', "read_img", 'nickname', 'email', 'gender')}),
         ("时间信息", {"fields": ("create_time", "last_login")}),
-        ("隐私信息", {"fields": ("real_auth_id", 'phone', 'age')}),
+        ("隐私信息", {"fields": ("real_auth", 'phone', 'age')}),
         ('权限信息', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
     readonly_fields = ("read_img", "read_password")

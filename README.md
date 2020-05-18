@@ -1920,6 +1920,1437 @@ Please refer to [Global Status Table](#Global Status Table)
 |  100   |      Error receiver       |   错误的接收者   |
 |  101   | Create MessageText Failed | 创建消息内容失败 |
 
+# RealAuth
+
+**实名认证类**
+
+## RealAuth Create
+
+> **API Description**
+
+`POST`
+
+此API用于创建一个实名认证信息，成功自动与用户绑定，暂不可解绑，并返回`real_auth_id`
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/realauth/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"realauth",
+    "subtype":"create",
+    "data":{
+        "id_type":"sfz",
+        "id":"33108219991127089X",
+        "name":"王凌超",
+        "gender":"male",
+        "birthday":1580140800.0,
+    }
+}
+```
+
+> **Data Param**
+
+|    Field     |  Type  | Length | Null | Default |                       **Description**                        |
+| :----------: | :----: | :----: | :--: | :-----: | :----------------------------------------------------------: |
+|   id_type    | string |        |      |         |        身份证件种类，目前只有`sfz`，其他返回`200`错误        |
+|      id      | string |   18   |      |         |                          身份证件号                          |
+|     name     | string |   30   |      |         |                             姓名                             |
+|    gender    | string |   6    |      |         |    年龄，只有`male`和`female`两个选项，其他返回`201`错误     |
+|   birthday   | float  |        |      |         |           生日时间戳，精确到日，时分秒信息将被忽略           |
+|    nation    | string |   10   |  √   |    √    |                             民族                             |
+|   address    | string |  100   |  √   |    √    |                             住址                             |
+| organization | string |   30   |  √   |    √    |                           签发机关                           |
+|  date_start  | float  |        |  √   |    √    | 证件有效期·起始 时间戳，精确到日，时分秒信息将被忽略，失败返回`202`错误 |
+|   date_end   | float  |        |  √   |    √    | 证件有效期·终止 时间戳，精确到日，时分秒信息将被忽略，失败返回`203`错误 |
+
+> **Notice**
+
+- `id`为不可重复字段，若创建的实名认证信息与已有的重复，将返回`100`状态码
+- `id_type`、`id`、`name`、`gender`、`birthday`为必填字段，且不能为空，**且创建后无法修改更新**
+- `nation`、`address`、`organization`、`date_start`、`date_end`为可选字段，且可为空（不过建议不要为空）
+- 各字段的长度限制需由前端校验设置好后再传，否则若有异常会返回`100`状态码
+- 后端不校验`date_start`与`date_end`之间的先后逻辑关系，请前端自行校验
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "real_auth_id":"3310821999..."
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -1, 
+    "message": "Error JSON key", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |        Message         |   Description    |
+| :----: | :--------------------: | :--------------: |
+|  100   | Create RealAuth failed | 创建实名认证失败 |
+|  200   |     Error id_type      |  错误的证件类型  |
+|  201   |      Error gender      |    错误的性别    |
+|  202   |     Error birthday     |  错误的出生年月  |
+|  203   |    Error date_start    | 错误的有效期开始 |
+|  204   |     Error date_end     | 错误的有效期终止 |
+
+## RealAuth Update
+
+> **API Description**
+
+`POST`
+
+此API用于更新与用户绑定的实名认证信息，若用户未绑定实名认证信息，返回`100`状态码
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/realauth/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"realauth",
+    "subtype":"update",
+    "data":{
+        "nation":"汉",
+        "address":"浙江省临海市...."
+		"organization":"临海市公安局",
+        "date_start":185551654...
+        "date_end":15068956...
+    }
+}
+```
+
+> **Data Param**
+
+|    Field     |  Type  | Length | Null | Default |                       **Description**                        |
+| :----------: | :----: | :----: | :--: | :-----: | :----------------------------------------------------------: |
+|    nation    | string |   10   |  √   |    √    |                             民族                             |
+|   address    | string |  100   |  √   |    √    |                             住址                             |
+| organization | string |   30   |  √   |    √    |                           签发机关                           |
+|  date_start  | float  |        |  √   |    √    | 证件有效期·起始 时间戳，精确到日，时分秒信息将被忽略，失败返回`202`错误 |
+|   date_end   | float  |        |  √   |    √    | 证件有效期·终止 时间戳，精确到日，时分秒信息将被忽略，失败返回`203`错误 |
+
+> **Notice**
+
+- 此API只能更新与用户自身绑定的实名认证信息，若无则返回`100`状态码
+- 此API不能更新`id_type`、`id`、`name`、`gender`、`birthday`等字段
+- `nation`、`address`、`organization`、`date_start`、`date_end`为可选字段，且可为空（不过建议不要为空）
+- 各字段的长度限制需由前端校验设置好后再传，否则若有异常会返回`100`状态码
+- 后端不校验`date_start`与`date_end`之间的先后逻辑关系，请前端自行校验
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {}
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -1, 
+    "message": "Error JSON key", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |          Message          |      Description      |
+| :----: | :-----------------------: | :-------------------: |
+|  100   |  RealAuth not certified   |      实名未认证       |
+|  200   | Error date_start/date_end | 错误的有效期开始/终止 |
+
+## RealAuth - Get
+
+> **API Description**
+
+`POST`
+
+此API用于获取用户绑定的实名认证信息
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/realauth/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"realauth",
+    "subtype":"get",
+    "data":{}
+}
+```
+
+> **Data Param**
+
+null
+
+> **Notice**
+
+- 此API只能获取与用户自身绑定的实名认证信息，若无则返回`100`状态码
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "id_type": "sfz", 
+        "id": "3310821999....", 
+        "name": "王凌超", 
+        "gender": "male", 
+        "nation": "汉", 
+        "birthday": 943632000.0, 
+        "address": "浙江省临海市....", 
+        "organization": "临海市公安局", 
+        "date_start": 1467907200.0, 
+        "date_end": 1783440000.0
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -1, 
+    "message": "Error Json key", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |        Message         | Description |
+| :----: | :--------------------: | :---------: |
+|  100   | RealAuth not certified | 实名未认证  |
+
+## RealAuth - Check
+
+> **API Description**
+
+`POST`
+
+此API用于检验用户是否进行了实名认证
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/realauth/check/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"realauth",
+    "subtype":"check",
+    "data":{"username": "wlc"}
+}
+```
+
+> **Data Param**
+
+|  Field   |  Type  | Length | Null | Default | **Description** |
+| :------: | :----: | :----: | :--: | :-----: | :-------------: |
+| username | string |        |      |         |     用户id      |
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "result": false, 
+}
+```
+
+> **Response Data Param**
+
+| Field  |  Type   |                **Description**                |
+| :----: | :-----: | :-------------------------------------------: |
+| result | boolean | 检查结果，`false`表示未实名，`true`表示已实名 |
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -1, 
+    "message": "Error Json key", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |    Message     | Description  |
+| :----: | :------------: | :----------: |
+|  100   | Error username | 错误的用户名 |
+
+# Face
+
+**人脸数据类**
+
+## Group - Create
+
+> **API Description**
+
+`POST`
+
+此API用于创建一个人员库，成功返回人员库id
+
+**此API有权限限制，仅管理员可用，其他人调用此API将返回`-103`状态码**
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/group/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"group",
+    "subtype":"create",
+    "data":{
+        "group_name": "西和5幢人员库",
+        "group_content": "浙江科技学院西和公寓5幢人脸数据库"
+    }
+}
+```
+
+> **Data Param**
+
+|     Field     |  Type  | Length | Null | Default | **Description** |
+| :-----------: | :----: | :----: | :--: | :-----: | :-------------: |
+|  group_name   | string |   20   |      |         |   人员库名称    |
+| group_content | string |        |  √   |         |   人员库描述    |
+
+> **Notice**
+
+- `group_name`为不可重复字段，若创建的人员库名称与已有的重复，将返回`100`状态码
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "group_id":5
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -103, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -103   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |          Message           |   Description    |
+| :----: | :------------------------: | :--------------: |
+|  100   | FaceGroup name has existed | 人员库名称已存在 |
+|  101   |  Create FaceGroup Failed   |  创建人员库失败  |
+
+## Group - Delete
+
+> **API Description**
+
+`POST`
+
+此API用于以`group_id`或者`group_name`为检索条件删除一个人员库，并同步删除里面所有的人脸数据
+
+**此API有权限限制，仅管理员可用，其他人调用此API将返回`-103`状态码**
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/group/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"group",
+    "subtype":"delete",
+    "data":{
+        "group_id":5,
+        "group_name": "西和5幢人员库"
+    }
+}
+```
+
+> **Data Param**
+
+|   Field    |  Type  | Length | Null | Default | **Description** |
+| :--------: | :----: | :----: | :--: | :-----: | :-------------: |
+|  group_id  |  int   |        |      |    √    |    人员库id     |
+| group_name | string |   20   |      |    √    |   人员库名称    |
+
+> **Notice**
+
+- `group_id`与`group_name`二选一即可，若都传值过来，则选择`group_id`为检索条件。
+- `group_id`字段类型为`int`型，但若传递了整型字符串过来，也会自动转为`int`类型，转换失败返回`100`状态码
+- 若两个参数都没传过来，返回`101`状态码
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {}
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -103, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -103   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |           Message           |        Description         |
+| :----: | :-------------------------: | :------------------------: |
+|  100   |       Error Group ID        |       错误的人员库ID       |
+|  101   | Need Group ID or Group name | 需要人员库ID或者人员库名称 |
+|  102   |        No such Group        |         无此人员库         |
+|  103   |     Delete Group Failed     |       删除人员库失败       |
+
+## Group - Update
+
+> **API Description**
+
+`POST`
+
+此API用于以`group_id`或者`group_name`为检索条件更新一个人员库描述（`group_content`）
+
+**此API有权限限制，仅管理员可用，其他人调用此API将返回`-103`状态码**
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/group/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"group",
+    "subtype":"update",
+    "data":{
+        "group_id":5,
+        "group_name": "西和5幢人员库",
+        "group_content":"浙江科技学院西和公寓5幢人脸数据库123"
+    }
+}
+```
+
+> **Data Param**
+
+|     Field     |  Type  | Length | Null | Default | **Description** |
+| :-----------: | :----: | :----: | :--: | :-----: | :-------------: |
+|   group_id    |  int   |        |      |    √    |    人员库id     |
+|  group_name   | string |   20   |      |    √    |   人员库名称    |
+| group_content | string |        |      |         |   人员库描述    |
+
+> **Notice**
+
+- `group_id`与`group_name`二选一即可，若都传值过来，则选择`group_id`为检索条件。
+- `group_id`字段类型为`int`型，但若传递了整型字符串过来，也会自动转为`int`类型，转换失败返回`100`状态码
+- 若两个参数都没传过来，返回`101`状态码
+- 只能修改`group_content`的值，`group_name`与`group_id`只作为检索条件使用
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {}
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -103, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -103   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |           Message           |        Description         |
+| :----: | :-------------------------: | :------------------------: |
+|  100   |       Error Group ID        |       错误的人员库ID       |
+|  101   | Need Group ID or Group name | 需要人员库ID或者人员库名称 |
+|  102   |        No such Group        |         无此人员库         |
+
+## Group - Get
+
+> **API Description**
+
+`POST`
+
+此API用于以`group_id`或者`group_name`为检索条件获取一个人员库信息
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/group/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"group",
+    "subtype":"get",
+    "data":{
+        "group_id":5,
+        "group_name": "西和5幢人员库"
+    }
+}
+```
+
+> **Data Param**
+
+|     Field     |  Type  | Length | Null | Default | **Description** |
+| :-----------: | :----: | :----: | :--: | :-----: | :-------------: |
+|   group_id    |  int   |        |      |    √    |    人员库id     |
+|  group_name   | string |   20   |      |    √    |   人员库名称    |
+| group_content | string |        |      |         |   人员库描述    |
+
+> **Notice**
+
+- `group_id`与`group_name`二选一即可，若都传值过来，则选择`group_id`为检索条件。
+- `group_id`字段类型为`int`型，但若传递了整型字符串过来，也会自动转为`int`类型，转换失败返回`100`状态码
+- 若两个参数都没传过来，返回`101`状态码
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "group_id": 5, 
+        "group_name": "西和5幢人员库", 
+        "group_content": "浙江科技学院西和公寓5幢人脸数据库"
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -103, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |           Message           |        Description         |
+| :----: | :-------------------------: | :------------------------: |
+|  100   |       Error Group ID        |       错误的人员库ID       |
+|  101   | Need Group ID or Group name | 需要人员库ID或者人员库名称 |
+|  102   |        No such Group        |         无此人员库         |
+
+## Group - List
+
+> **API Description**
+
+`POST`
+
+此API用于返回所有人员库信息
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/group/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"group",
+    "subtype":"list",
+    "data":{}
+}
+```
+
+> **Data Param**
+
+null
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "num": 2, 
+        "list": [
+            {
+                "group_id": 5, 
+                "group_name": "西和5幢人员库", 
+                "group_content": "浙江科技学院西和公寓5幢人脸数据库"
+            }, 
+            {
+                "group_id": 6, 
+                "group_name": "西和6幢人员库", 
+                "group_content": "浙江科技学院西和公寓6幢人脸数据库"
+            }
+        ]
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -103, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+null
+
+## Face - Register（新修改）
+
+> **API Description**
+
+`POST`
+
+此API用于以`base64`为人脸数据注册用户的人脸信息，成功返回`face_id(身份证号)`
+
+**调用此API前需保证用户已进行实名认证，否则将返回`100`状态码**
+
+
+
+**修改**
+
+**2020年3月12日21:04:08**
+
+新增`104`状态码，出现条件为人脸上有遮罩物，例如口罩；
+
+补充了`-101`和`-100`全局错误返回码，功能里已存在，只是忘记写进文档中
+
+**2020年2月2日00:03:20**
+
+新增注册时人脸个数判断，详情看api的局部返回值
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"face",
+    "subtype":"register",
+    "data":{
+        "base64":"sdfj32...",
+        "db": 1,
+        "content":"人脸数据描述"
+    }
+}
+```
+
+> **Data Param**
+
+|  Field  |  Type  | Length | Null | Default |   **Description**   |
+| :-----: | :----: | :----: | :--: | :-----: | :-----------------: |
+| base64  | string |        |      |         |   图片base64文本    |
+|   db    |  int   |        |      |    √    | 人员库id，默认为`1` |
+| content | string |        |      |    √    |    人脸数据描述     |
+
+> **Notice**
+
+- 用户若未进行过**实名认证**，则返回`100`状态码
+- 用户可重复调用此API对人脸数据进行覆盖注册，若图片中无人脸数据或人脸数据过多将返回下面状态码，原人脸数据不受影响。
+- **确保人脸图像中只有一张人脸数据，无人脸返回`102`状态码，大于1张人脸返回`103`状态码**
+- `db`为人员库id，可缺省，若有不可为`null`，默认为`1`(默认人员库)，详情人员库信息可通过[获取人员库列表API](#Group - List)获取
+- `content`为人员描述信息，可缺省，若有不可为`null`，默认为空文本
+- 若两个参数都没传过来，返回`101`状态码
+- 只能修改`group_content`的值，`group_name`与`group_id`只作为检索条件使用
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "face_id":"3310821999..."
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 100, 
+    "message": "No Permission Operate", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -101   |
+| -100   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |           Message            |    Description     |
+| :----: | :--------------------------: | :----------------: |
+|  100   |    Faces group not exist     |    人员库不存在    |
+|  101   |     Register face failed     |  注册人员数据失败  |
+|  102   |    No face data in base64    |  图片中无人脸数据  |
+|  103   | Too much face data in base64 | 图片中人脸数据过多 |
+|  104   |     No mask on the face      |  脸部不能有遮罩物  |
+
+## Face - Find（新修改）
+
+> **API Description**
+
+`POST`
+
+此API用于以`base64`为人脸数据查找指定人员库中的的人脸信息，成功返回人脸相关信息
+
+**此API慎用，因为会返回用户的隐私信息**
+
+
+
+**修改**
+
+**2020年3月12日21:03:06**
+
+在完整数据返回的部分新增`mask`字段，用来判断人脸是否有脸部遮罩物
+
+补充了`-101`和`-100`全局错误返回码，功能里已存在，只是忘记写进文档中
+
+**2020年2月2日00:05:55**
+
+新增人脸数的判断，修复只能识别一张人脸的情况
+
+更新返回的json文本格式
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"face",
+    "subtype":"find",
+    "data":{
+        "base64":"sdfj32...",
+        "db": 1,
+        "ret_type":0
+    }
+}
+```
+
+> **Data Param**
+
+|  Field   |  Type  | Length | Null | Default |                      **Description**                      |
+| :------: | :----: | :----: | :--: | :-----: | :-------------------------------------------------------: |
+|  base64  | string |        |      |         |                      图片base64文本                       |
+|    db    |  int   |        |      |    √    |                   人员库id，默认为`-1`                    |
+| ret_type |  int   |        |      |    √    | 数据返回模式：`0 精简返回`,`1 全部返回`，默认`0 精简返回` |
+
+> **Notice**
+
+- **没有人脸将返回`100`错误**
+- `db`为人员库id，可缺省，若有不可为`null`，默认为`-1`(所有人员库)，详情人员库信息可通过[获取人员库列表API](#Group - List)获取
+- `ret_type`为数据返回模式，`0`为精简返回，`1`为完全返回。**后期打算将`1 全部返回`限制为仅管理员可用，目前无限制**
+
+> **Response Data Param**
+>
+> **0 精简返回**
+
+|   Field   |  Type   | Length | Null | Default |               **Description**               |
+| :-------: | :-----: | :----: | :--: | :-----: | :-----------------------------------------: |
+|    ID     | string  |   18   |      |         |  人脸数据id（身份证号），若没找到默认为""   |
+|   name    | string  |        |      |    √    |         人脸姓名，若没找到默认为""          |
+| liveness  | boolean |        |      |         | 活体检测，`true`为真人，`false`为照片等假人 |
+| threshold |  float  |        |      |         |       人脸相似度，若没找到默认为0.00        |
+
+> **Notice**
+
+1. 返回的`ID`为私密信息，请慎用
+2. 若人员库中未找到此人信息，仍然会返回人脸数据信息，但`ID`,`name`将为空字符串，`threshold`为`0.00`，`liveness`仍然有效
+3. `threshold`精确到小数点后两位，最高为`1(完全匹配)`，最低为`0(匹配失败时将会返回)`，一般匹配程度超过0.8才算匹配成功返回匹配值，否则一律返回`0.00`
+
+> **Example**
+
+```python
+{
+    "num": 2, 
+    "list": [
+        {
+            "ID": "",
+            "name": "", 
+            "liveness": false, 
+            "threshold": 0.0
+        }, 
+        {
+            "ID": "", 
+            "name": "", 
+            "liveness": true, 
+            "threshold": 0.0
+        }
+    ]
+}
+```
+
+> **Notice**
+
++ 在简要返回中，若图片中的人脸数据有部分识别失败时，并不能准确判断。但在完全返回中可以进行判断
++ 若人脸数据有部分识别失败，`ID`为"",`name`为“”，`liveness`为false`threshold`为0.0
++ 识别失败与匹配失败不同，但在简单返回中返回值类似，唯一区别在于`liveness`，但若识别的为照片中人物且识别失败，两者返回值将无法分辨。
++ 识别失败属于程序算法中问题，暂无更优解，匹配失败是指人脸数据不在人员库中
++ 上面例子中，第一组数据为识别失败，第二组数据为匹配失败
+
+> **Response Data Param**
+>
+> **1 完全返回**
+
+|    Field     |    Type    | Length | Null | Default |                   **Description**                   |
+| :----------: | :--------: | :----: | :--: | :-----: | :-------------------------------------------------: |
+|      ID      |   string   |   18   |      |         |      人脸数据id（身份证号），若没找到默认为""       |
+|     name     |   string   |        |      |    √    |             人脸姓名，若没找到默认为""              |
+|     age      |    int     |        |      |         |           人脸预测年龄（非人脸真实年龄）            |
+|   liveness   |  boolean   |        |      |         |     活体检测，`true`为真人，`false`为照片等假人     |
+|  threshold   |   float    |        |      |         |           人脸相似度，若没找到默认为0.00            |
+|    gender    |   string   |        |      |         |     用户性别，仅两种选择：`male`男，`female`女      |
+|   top_left   | tuple/list |        |      |         |               人脸出现位置左上角坐标                |
+|  top_right   | tuple/list |        |      |         |               人脸出现位置右上角坐标                |
+| bottom_left  | tuple/list |        |      |         |               人脸出现位置左下角坐标                |
+| bottom_right | tuple/list |        |      |         |               人脸出现位置右下角坐标                |
+|     mask     |  boolean   |        |      |         | **新增字段**，脸部是否有遮罩物，true为有，false为无 |
+
+> **Notice**
+
+1. 完全返回中有很多私密信息，请慎用！
+2. 若人员库中未找到此人信息，仍然会返回人脸数据信息，但`ID`,`name`将为空字符串，`threshold`为`0.00`，`liveness`仍然有效
+3. `threshold`精确到小数点后两位，最高为`1(完全匹配)`，最低为`0(匹配失败时将会返回)`，一般匹配程度超过0.8才算匹配成功返回匹配值，否则一律返回`0.00`
+4. **mask字段为新增检测信息，若识别失败此字段会返回null值**
+
+> **Example**
+
+```python
+{
+    "num": 2, 
+    "list": [
+        {
+            "ID": "", 
+            "age": null, 
+            "threshold": 0.0, 
+            "gender": "", 
+            "liveness": false, 
+            "top_left": [61, 94], 
+            "top_right": [157, 94], 
+            "bottom_left": [61, 189], 
+            "bottom_right": [157, 189], 
+            "name": "",
+            "mask": true
+        }, 
+        {
+            "ID": "", 
+            "age": 26, 
+            "threshold": 0.0,
+            "gender": "male", 
+            "liveness": true, 
+            "top_left": [209, 60], 
+            "top_right": [308, 60], 
+            "bottom_left": [209, 159], 
+            "bottom_right": [308, 159], 
+            "name": "",
+            "mask":false
+        }
+    ]
+}
+```
+
+> **Notice**
+
++ 在完全返回中，若图片中的人脸数据有部分识别失败时，`age`字段将返回null值，但人脸矩阵依旧有数据
++ 若人脸数据有部分识别失败，`ID`为`""`，`age`为`null`，`gender`为`""`，`name`为`""`，`liveness`为`false`，`threshold`为`0.0`
++ 识别失败与匹配失败不同，识别失败属于程序算法中问题，暂无更优解，匹配失败是指人脸数据不在人员库中
++ 上面例子中，第一组数据为识别失败，第二组数据为匹配失败
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        返回数据见上方example
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 100, 
+    "message": "No face authentication", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -101   |
+| -100   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |        Message         |   Description    |
+| :----: | :--------------------: | :--------------: |
+|  100   | No face data in base64 | 图片中无人脸信息 |
+
+## Face - Verify（新修改）
+
+> **API Description**
+
+`POST`
+
+此API用于以`base64`为人脸数据核验是否与用户人脸认证信息匹配，成功返回相关信息
+
+**没有人脸将返回`101`错误**
+
+
+
+**修改**
+
+**2020年3月12日21:05:08**
+
+在完整数据返回的部分新增`mask`字段，用来判断人脸是否有脸部遮罩物
+
+补充了`-101`和`-100`全局错误返回码，功能里已存在，只是忘记写进文档中
+
+**2020年2月2日00:22:20**
+
+新增多张人脸时返回`102`状态码
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"face",
+    "subtype":"verify",
+    "data":{
+        "base64":"sdfj32...",
+        "ret_type":0
+    }
+}
+```
+
+> **Data Param**
+
+|  Field   |  Type  | Length | Null | Default |                      **Description**                      |
+| :------: | :----: | :----: | :--: | :-----: | :-------------------------------------------------------: |
+|  base64  | string |        |      |         |                      图片base64文本                       |
+| ret_type |  int   |        |      |    √    | 数据返回模式：`0 精简返回`,`1 全部返回`，默认`0 精简返回` |
+
+> **Notice**
+
+- 若用户未进行过人脸认证，返回`100`状态码。
+- **没有人脸将返回`101`错误，多张人脸返回`102`错误**
+- `ret_type`为数据返回模式，`0`为精简返回，`1`为完全返回。**后期打算将`1 全部返回`限制为仅管理员可用，目前无限制**
+
+> **Response Data Param**
+>
+> **0 精简返回**
+
+|   Field   |  Type   | Length | Null | Default |                **Description**                |
+| :-------: | :-----: | :----: | :--: | :-----: | :-------------------------------------------: |
+|  result   | boolean |        |      |         | 匹配结果，`true`为匹配成功，`false`为匹配失败 |
+| liveness  | boolean |        |      |         |  活体检测，`true`为真人，`false`为照片等假人  |
+| threshold |  float  |        |      |         |        人脸相似度，若没找到默认为0.00         |
+
+> **Notice**
+
+1. 若人员库中未找到此人信息，`result`为`false`，`threshold`为`0.00`，`liveness`仍然有效
+2. `result`为真时并不表示通过验证，请结合`liveness`字段进行判断
+3. `threshold`精确到小数点后两位，最高为`1(完全匹配)`，最低为`0(匹配失败时将会返回)`，一般匹配程度超过0.8才算匹配成功返回匹配值，否则一律返回`0.00`
+4. **mask字段为新增检测信息，若识别失败此字段会返回null值**
+
+> **Example**
+
+```python
+{
+    "result": true, 
+    "liveness": true,
+    "threshold": 0.98
+}
+```
+
+
+
+> **Response Data Param**
+>
+> **1 完全返回**
+
+|    Field     |    Type    | Length | Null | Default |                   **Description**                   |
+| :----------: | :--------: | :----: | :--: | :-----: | :-------------------------------------------------: |
+|    result    |  boolean   |        |      |         |    匹配结果，`true`为匹配成功，`false`为匹配失败    |
+|      ID      |   string   |   18   |      |         |      人脸数据id（身份证号），若没找到默认为""       |
+|     age      |    int     |        |      |         |           人脸预测年龄（非人脸真实年龄）            |
+|   liveness   |  boolean   |        |      |         |     活体检测，`true`为真人，`false`为照片等假人     |
+|  threshold   |   float    |        |      |         |           人脸相似度，若没找到默认为0.00            |
+|    gender    |   string   |        |      |         |     用户性别，仅两种选择：`male`男，`female`女      |
+|   top_left   | tuple/list |        |      |         |               人脸出现位置左上角坐标                |
+|  top_right   | tuple/list |        |      |         |               人脸出现位置右上角坐标                |
+| bottom_left  | tuple/list |        |      |         |               人脸出现位置左下角坐标                |
+| bottom_right | tuple/list |        |      |         |               人脸出现位置右下角坐标                |
+|     mask     |  boolean   |        |      |         | **新增字段**，脸部是否有遮罩物，true为有，false为无 |
+
+> **Notice**
+
+1. 若人员库中未找到此人信息，`result`为`false`，`threshold`为`0.00`，`liveness`仍然有效
+2. `result`为真时并不表示通过验证，请结合`liveness`字段进行判断
+3. `threshold`精确到小数点后两位，最高为`1(完全匹配)`，最低为`0(匹配失败时将会返回)`，一般匹配程度超过0.8才算匹配成功返回匹配值，否则一律返回`0.00`
+
+> **Example**
+
+```python
+{
+    "result": true,
+    "ID": "33108219991127089X", 
+    "age": 27, 
+    "threshold": 0.98, 
+    "gender": "male", 
+    "liveness": true, 
+    "top_left": [40, 88], 
+    "top_right": [162, 88], 
+    "bottom_left": [40, 210], 
+    "bottom_right": [162, 210]
+}
+```
+
+> **Notice**
+
++ 在完全返回中，若图片中的人脸数据有部分识别失败时，`age`字段将返回null值，但人脸矩阵依旧有数据
++ 若人脸数据有部分识别失败，`ID`为`""`，`age`为`null`，`gender`为`""`，`name`为`""`，`liveness`为`false`，`threshold`为`0.0`
++ 识别失败与匹配失败不同，识别失败属于程序算法中问题，暂无更优解，匹配失败是指人脸数据不在人员库中
+
+> **Response Success Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        返回数据见上方example
+    }
+}
+```
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": 100, 
+    "message": "No face authentication", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -101   |
+| -100   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+| Status |           Message            |    Description     |
+| :----: | :--------------------------: | :----------------: |
+|  100   |    No face authentication    |   人脸信息未认证   |
+|  101   |    No face data in base64    |  图片中无人脸信息  |
+|  102   | Too much face data in base64 | 图片中人脸数据过多 |
+
+## Face - Mask（新增）
+
+> **API Description**
+
+`POST`
+
+此API用于以`base64`为人脸数据判断画面中的人脸是否有脸部遮罩物，成功返回相关信息
+
+**注意**
+
+此API不会判断人脸身份，仅判断脸部有无遮罩物
+
+> **URL**
+
+`http://guosai.zustmanong.cn/api/v2/face/mask/?token=`
+
+> **URL Param**
+
+| Field |  Type  | Length | Null | Default | **Description** |
+| :---: | :----: | :----: | :--: | :-----: | :-------------: |
+| token | string |   32   |      |         |    用户凭证     |
+
+> **Request Json Text Example**
+
+```python
+{
+    "id":1234,
+    "type":"mask",
+    "subtype":"check",
+    "data":{
+        "base64":"sdfj32...",
+    }
+}
+```
+
+> **Data Param**
+
+| Field  |  Type  | Length | Null | Default | **Description** |
+| :----: | :----: | :----: | :--: | :-----: | :-------------: |
+| base64 | string |        |      |         | 图片base64文本  |
+
+> **Response Success Example**
+
+```python
+{
+    "id": 0, 
+    "status": 0, 
+    "message": "Successful", 
+    "data": {
+        "num": 1, 
+        "list": [
+            {
+                "top_left": [49, 84], 
+                "top_right": [150, 84], 
+                "bottom_left": [49, 208], 
+                "bottom_right": [150, 208], 
+                "result": false
+            }
+        ]
+    }
+}
+```
+
+> **Response Data Param**
+
+|    Field     |    Type    | Length | Null | Default |                **Description**                |
+| :----------: | :--------: | :----: | :--: | :-----: | :-------------------------------------------: |
+|    result    |  boolean   |        |      |         | 匹配结果，`true`为有遮罩物，`false`为无遮罩物 |
+|   top_left   | tuple/list |        |      |         |            人脸出现位置左上角坐标             |
+|  top_right   | tuple/list |        |      |         |            人脸出现位置右上角坐标             |
+| bottom_left  | tuple/list |        |      |         |            人脸出现位置左下角坐标             |
+| bottom_right | tuple/list |        |      |         |            人脸出现位置右下角坐标             |
+
+> **Notice**
+
++ 此API不会判断人脸身份，仅判断脸部有无遮罩物
++ 理论上不会判断失败，但有概率会错误识别，目前测试来看对小像素的物体容易识别失败
++ 识别错误是指将不是人脸的数据识别为人脸数据，且此API会将动漫的人脸也识别为人脸，很迷
+
+> **Response Failed Example**
+
+```python
+{
+    "id": 1234, 
+    "status": -100, 
+    "message": "Missing necessary args", 
+    "data": {}
+}
+```
+
+> **Used Global Status**
+
+Please refer to [Global Status Table](#Global Status Table)
+
+| Status |
+| ------ |
+| -101   |
+| -100   |
+| -3     |
+| -2     |
+| -1     |
+
+> **Local Status**
+
+null
+
 # Global Status Table
 
 **所有的全局status值皆小于0**
